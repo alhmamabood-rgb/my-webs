@@ -1,0 +1,53 @@
+
+<form action="index.php" method="get" autocomplete="off" enctype="multipart/form-data">
+<fieldset>
+    <legend>للتسجيل في الجامعة</legend>
+
+    <label for="std_name">أسم الطالب</label>
+    <input type="text" required id="std_name" placeholder="أكتب اسمك">
+
+    <label for="std_age">العمر</label>
+    <input type="text" maxlength="2" min="10" required id="std_age">
+
+    <label>الجنس</label>
+    <input type="radio" required id="male" name="gender" value="ذكر" checked>
+    <label for="male">ذكر</label>
+    <input type="radio" required id="female" name="gender" value="أنثى">
+    <label for="female">أنثى</label>
+
+    <label for="std_imge">الصورة الشخصية</label>
+    
+        <input type="file" id="std_imge">
+
+        <label for="std_email">البريد الإلكتروني</label>
+        <input type="email" required id="std_email" placeholder="E-mail">
+
+        <label for="std_phone">رقم الهاتف</label>
+        <input type="tel" maxlength="9" required id="std_phone" placeholder="أدخل رقم الهاتف">
+
+        <label for="std_year">سنة تخرج الثانوية</label>
+        <select id="std_year">
+            <option value="2015">2015</option>
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+        </select>
+
+        <label>رسالة</label>
+        <textarea name="message" rows="3" cols="45" placeholder="...أكتب رسالتك هنا"></textarea>
+
+        <input type="submit" value="تسجيل" id="register">
+        <input type="reset" value="إلغاء" id="cancel">
+        <button type="button" id="edit">تعديل</button>
+        <button type="button" id="show">عرض</button>
+        <button type="button" id="print">طباعة</button>
+    </fieldset>
+</form>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>قسم التسجيل</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+
+<form id="regForm" autocomplete="off" enctype="multipart/form-data">
+<fieldset>
+
+
+<legend>للتسجيل في الجامعة</legend>
+
+
+<label for="std_name">أسم الطالب</label>
+<input type="text" required id="std_name" name="std_name" placeholder="أكتب اسمك">
+
+
+<label for="std_age">العمر</label>
+<input type="number" id="std_age" name="std_age" min="10" max="99" required>
+
+
+<label>الجنس</label>
+
+
+<input type="radio" id="male" name="gender" value="ذكر" checked>
+<label for="male">ذكر</label>
+
+
+<input type="radio" id="female" name="gender" value="أنثى">
+<label for="female">أنثى</label>
+
+
+<label for="std_imge">الصورة الشخصية</label>
+<input type="file" id="std_imge" name="std_imge" accept="image/*">
+
+
+<label for="std_major">اختر التخصص</label>
+<select id="std_major" name="std_major" required>
+  <option value="">-- اختر التخصص --</option>
+  <option>تقنية معلومات</option>
+  <option>الأمن السيبراني</option>
+  <option>الذكاء الاصطناعي</option>
+  <option>الهندسة المعمارية</option>
+  <option>المحاسبة</option>
+  <option>الصيدلة</option>
+  <option>طب الأسنان</option>
+  <option>المختبرات الطبية</option>
+  <option>الشريعة والقانون</option>
+</select>
+
+
+<label for="std_email">البريد الإلكتروني</label>
+<input type="email" required id="std_email" name="std_email" placeholder="E-mail">
+
+
+<label for="std_phone">رقم الهاتف</label>
+<input type="tel" maxlength="9" required id="std_phone" name="std_phone" placeholder="أدخل رقم الهاتف">
+
+
+<label for="std_year">سنة تخرج الثانوية</label>
+<select id="std_year" name="std_year">
+  <option>2015</option>
+  <option>2016</option>
+  <option>2017</option>
+  <option>2018</option>
+  <option>2019</option>
+  <option>2020</option>
+  <option>2021</option>
+  <option>2022</option>
+  <option>2023</option>
+  <option>2024</option>
+  <option>2025</option>
+  <option>2026</option>
+</select>
+
+
+<label for="message">رسالة</label>
+<textarea id="message" name="message" rows="3" cols="45" placeholder="...أكتب رسالتك هنا"></textarea>
+
+
+<input type="submit" value="تسجيل" id="register">
+<input type="reset" value="إلغاء" id="cancel">
+<button type="button" id="edit">تعديل</button>
+<button type="button" id="show">عرض</button>
+<button type="button" id="print">طباعة</button>
+
+
+</fieldset>
+</form>
+
+
+<br><br>
+
+
+<!-- صندوق رسالة الترحيب + ارسال البيانات لك -->
+<div id="sendBox" hidden>
+  <h3 id="welcomeText"></h3>
+  <p>اختر طريقة الإرسال لإدارة التسجيل:</p>
+
+
+  <a id="waLink" href="#" target="_blank">📲 إرسال عبر واتساب</a>
+  <br><br>
+
+
+  <a id="smsLink" href="#">✉️ إرسال رسالة SMS</a>
+  <br><br>
+
+
+  <a id="callLink" href="#">📞 اتصال الآن</a>
+</div>
+
+
+<br><br>
+
+
+<div id="results" hidden>
+<h3>بيانات التسجيل</h3>
+
+
+<table border="1" width="100%" cellpadding="6">
+<thead>
+<tr>
+  <th>#</th>
+  <th>الاسم</th>
+  <th>العمر</th>
+  <th>الجنس</th>
+  <th>البريد</th>
+  <th>الهاتف</th>
+  <th>سنة التخرج</th>
+  <th>التخصص</th>
+  <th>الرسالة</th>
+  <th>الصورة</th>
+  <th>حذف</th>
+</tr>
+</thead>
+
+
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+
+<footer>
+<div class="contact-section">
+  <h3>للتواصل معنا:</h3>
+  <div class="contact-icons">
+    <li><a href="index.html">الرجوع للرئسية</a></li>
+    <a href="tel:+967717854693">اتصال</a>
+    <a href="sms:+967717854693">رسائل SMS</a>
+    <a href="https://wa.me/967717854693">واتساب</a>
+  </div>
+</div>
+
+
+<p>تم التصميم بواسطة: عبدالرحمن فيصل همام</p>
+<p style="font-size:small;color:rgb(129,129,129);">© 2025 - جميع الحقوق محفوظة - جامعة الجزيرة</p>
+</footer>
+
+
+<script>
+/* رقم الإدارة */
+const ADMIN_PHONE_LOCAL = "717854693";
+const ADMIN_PHONE_INT = "+967" + ADMIN_PHONE_LOCAL;   // +967717854693
+const ADMIN_PHONE_WA = "967" + ADMIN_PHONE_LOCAL;     // 967717854693 (wa.me بدون +)
+
+
+let data = JSON.parse(localStorage.getItem("students")) || [];
+let editIndex = null;
+
+
+function saveData(){
+  localStorage.setItem("students", JSON.stringify(data));
+}
+
+
+function render(){
+  let table = document.getElementById("rows");
+  table.innerHTML = "";
+
+
+  data.forEach((student,i)=>{
+    let img = student.image ? "<img src='"+student.image+"' width='50'>" : "-";
+    table.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${student.name}</td>
+        <td>${student.age}</td>
+        <td>${student.gender}</td>
+        <td>${student.email}</td>
+        <td>${student.phone}</td>
+        <td>${student.year}</td>
+        <td>${student.major || "-"}</td>
+        <td>${student.message || ""}</td>
+        <td>${img}</td>
+        <td><button type="button" onclick="deleteRow(${i})">حذف</button></td>
+      </tr>
+    `;
+  });
+
+
+  document.getElementById("results").hidden = false;
+}
+
+
+function deleteRow(i){
+  data.splice(i,1);
+  saveData();
+  render();
+}
+
+
+/* تجهيز روابط الإرسال (واتساب/SMS/اتصال) + يطلع اسم الطالب */
+function updateSendBox(student){
+  const sendBox = document.getElementById("sendBox");
+  const welcomeText = document.getElementById("welcomeText");
+
+
+  welcomeText.textContent = `✅ تم التسجيل يا ${student.name} — أرسل بياناتك الآن`;
+
+
+  const msg =
+`طلب تسجيل جديد - جامعة الجزيرة
+الاسم: ${student.name}
+العمر: ${student.age}
+الجنس: ${student.gender}
+التخصص: ${student.major || "-"}
+البريد: ${student.email}
+الهاتف: ${student.phone}
+سنة التخرج: ${student.year}
+الرسالة: ${student.message || "-"}`;
+
+
+  const encoded = encodeURIComponent(msg);
+
+
+  document.getElementById("waLink").href = `https://wa.me/${ADMIN_PHONE_WA}?text=${encoded}`;
+  document.getElementById("smsLink").href = `sms:${ADMIN_PHONE_INT}?body=${encoded}`;
+  document.getElementById("callLink").href = `tel:${ADMIN_PHONE_INT}`;
+
+
+  sendBox.hidden = false;
+  sendBox.scrollIntoView({behavior:"smooth"});
+}
+
+
+document.getElementById("regForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+
+  let file = document.getElementById("std_imge").files[0];
+  let reader = new FileReader();
+
+
+  reader.onload = function(){
+    let student = {
+      name: std_name.value,
+      age: std_age.value,
+      gender: document.querySelector('input[name="gender"]:checked').value,
+      major: std_major.value,
+      email: std_email.value,
+      phone: std_phone.value,
+      year: std_year.value,
+      message: message.value,
+      image: reader.result
+    };
+
+
+    if(editIndex !== null){
+      data[editIndex] = student;
+      editIndex = null;
+    } else {
+      data.push(student);
+    }
+
+
+    saveData();
+    render();
+    updateSendBox(student);
+    regForm.reset();
+  };
+
+
+  if(file){
+    reader.readAsDataURL(file);
+  } else {
+    reader.onload();
+  }
+});
+
+
+document.getElementById("show").onclick = render;
+
+
+document.getElementById("edit").onclick = function(){
+  let index = prompt("اكتب رقم السجل للتعديل");
+
+
+  if(index && data[index-1]){
+    let s = data[index-1];
+
+
+    std_name.value = s.name;
+    std_age.value = s.age;
+    std_email.value = s.email;
+    std_phone.value = s.phone;
+    std_year.value = s.year;
+    std_major.value = s.major || "";
+    message.value = s.message;
+
+
+    if(s.gender == "ذكر") male.checked = true;
+    else female.checked = true;
+
+
+    editIndex = index - 1;
+  }
+};
+
+
+document.getElementById("print").onclick = function(){
+  window.print();
+};
+</script>
+
+
+</body>
+</html>
